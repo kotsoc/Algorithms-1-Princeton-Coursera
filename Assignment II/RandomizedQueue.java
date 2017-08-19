@@ -16,7 +16,7 @@ import edu.princeton.cs.algs4.StdRandom;
 public class RandomizedQueue<Item> implements Iterable<Item> {
 private Item[] randQ;
 private int n; // number of elements
-public int nullC; // number of null elements ????
+private int nullC; // number of null elements ????
 
 public RandomizedQueue() {                 // construct an empty randomized queue
 // Keep a Null counter
@@ -34,6 +34,9 @@ public int size() {                        // return the number of items on the 
 }
 
 public void enqueue(Item item) {           // add the item
+    if (item == null) {
+        throw new java.lang.IllegalArgumentException();
+    }
     if (nullC == 0) { 
         resize(randQ.length*2);
         nullC = randQ.length /2;
@@ -48,6 +51,7 @@ public void enqueue(Item item) {           // add the item
 }
 
 public Item dequeue() {                    // remove and return a random item
+    if (n == 0) { throw new java.util.NoSuchElementException();}
     int element = StdRandom.uniform(randQ.length);
     while(randQ[element] == null) {
         element = StdRandom.uniform(randQ.length);
@@ -63,6 +67,7 @@ public Item dequeue() {                    // remove and return a random item
 }
 
 public Item sample() {                     // return (but do not remove) a random item
+    if (n == 0) { throw new java.util.NoSuchElementException();}
     int element = StdRandom.uniform(randQ.length);
     while(randQ[element] == null) {
         element = StdRandom.uniform(randQ.length);
@@ -72,7 +77,7 @@ public Item sample() {                     // return (but do not remove) a rando
 
 private void resize(int capacity) {
     assert capacity >=n;
-    System.out.println("Resizing array from "+randQ.length+" to "+capacity);
+//    F
     Item[] copy = (Item[]) new Object[capacity];
     int j = 0;
     for (int i = 0; i < randQ.length; i++) {
@@ -91,7 +96,7 @@ private class  rQueueIterator implements Iterator<Item> {
     int count = 0;
     
     public boolean hasNext() {
-        return count < randQ.length; 
+        return count < n; 
     }
     
     public void remove() { throw new UnsupportedOperationException(); }
@@ -106,20 +111,21 @@ private class  rQueueIterator implements Iterator<Item> {
 }
 public static void main(String[] args) {   // unit testing (optional)
     RandomizedQueue<String> r = new RandomizedQueue<String>();
-        for( String a: args) {
-            r.enqueue(a);
-            r.enqueue(a);
-        }
-        Iterator<String> it = r.iterator();
+//        for( String a: args) {
+//            r.enqueue(a);
+//            r.enqueue(a);
+//        }
         int leng = r.size();
         for (int i = 0; i <leng; i++){
             System.out.println(r.dequeue());         
         }
-        for (Integer i = 0; i < 15; i++){
+        for (Integer i = 0; i < 1000; i++){
            r.enqueue(i.toString());
+           if (i%33 ==0){
            System.out.println("Nullcounter is "+r.nullC);
-           System.out.println("Elements "+r.n);
+           System.out.println("Elements "+r.n);}
         }
+        Iterator<String> it = r.iterator();
         while (it.hasNext()) {
             String str = it.next();
             System.out.println(str+ " ");

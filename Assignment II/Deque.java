@@ -33,7 +33,7 @@ public class Deque<Item> implements Iterable<Item> {
     }
     
     public boolean isEmpty() {                 // is the deque empty?
-        return first == null;
+        return n == 0;
     }
     
     public int size() {                        // return the number of items on the deque
@@ -130,10 +130,13 @@ public class Deque<Item> implements Iterable<Item> {
     
     public static void main(String[] args) {   // unit testing (optional)
         Deque<String> deck = new Deque<String>();
-        for( String a: args) {
-            deck.addFirst(a);
-            deck.addLast(a);
-        }
+//        for( String a: args) {
+//            deck.addFirst(a);
+//            deck.addLast(a);
+//        }
+        deck.addFirst("a");
+        deck.removeLast();
+        System.out.println(deck.size());
 //        Iterator<String> it = deck.iterator();
 //        for (int i = 0; i <12; i++){
 //            System.out.println(deck.removeFirst());         
