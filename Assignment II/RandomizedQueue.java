@@ -16,16 +16,17 @@ import edu.princeton.cs.algs4.StdRandom;
 public class RandomizedQueue<Item> implements Iterable<Item> {
 private Item[] randQ;
 private int n; // number of elements
-private int nullC; // number of null elements ????
+public int nullC; // number of null elements ????
 
 public RandomizedQueue() {                 // construct an empty randomized queue
 // Keep a Null counter
 randQ = (Item[]) new Object[2];
 n = 0;
+nullC = 2;
 }
 
 public boolean isEmpty() {                 // is the queue empty?
-return n ==0;
+return nullC == randQ.length;
 }
 
 public int size() {                        // return the number of items on the queue
@@ -33,8 +34,17 @@ public int size() {                        // return the number of items on the 
 }
 
 public void enqueue(Item item) {           // add the item
-    if (n == randQ.length) { resize(randQ.length*2);}
-    randQ[n++] = item;
+    if (nullC == 0) { 
+        resize(randQ.length*2);
+        nullC = randQ.length /2;
+    }
+    int i =randQ.length-1;
+    while (randQ[i] != null && i > 0){
+        i--;
+    }
+    randQ[i] = item;
+    n++;
+    nullC--;
 }
 
 public Item dequeue() {                    // remove and return a random item
@@ -44,25 +54,78 @@ public Item dequeue() {                    // remove and return a random item
     }
     Item item = randQ[element];
     randQ[element] = null;
+    nullC++;
+    n--;
+    if (nullC > (3*randQ.length/4) && randQ.length > 2) {
+        resize(randQ.length/2);
+    }
     return item;
 }
 
 public Item sample() {                     // return (but do not remove) a random item
+    int element = StdRandom.uniform(randQ.length);
+    while(randQ[element] == null) {
+        element = StdRandom.uniform(randQ.length);
+    }
+    return randQ[element];
 }
 
-public void resize(int capacity) {
+private void resize(int capacity) {
     assert capacity >=n;
-    
+    System.out.println("Resizing array from "+randQ.length+" to "+capacity);
     Item[] copy = (Item[]) new Object[capacity];
-    
-    for (int i = 0; i < n; i++) {
-        copy[i] = randQ[i];
+    int j = 0;
+    for (int i = 0; i < randQ.length; i++) {
+        if ( randQ[i] != null) {copy[j++] = randQ[i];}
     }
+    nullC = capacity -n;
     randQ = copy;
 }
 
 public Iterator<Item> iterator() {         // return an independent iterator over items in random order
-                            }
+    StdRandom.shuffle(randQ);
+    
+    return new rQueueIterator();
+}
+private class  rQueueIterator implements Iterator<Item> {
+    int count = 0;
+    
+    public boolean hasNext() {
+        return count < randQ.length; 
+    }
+    
+    public void remove() { throw new UnsupportedOperationException(); }
+    
+    public Item next() {
+        if (!hasNext()) { throw new NoSuchElementException();}
+        while(randQ[count] == null && count < randQ.length) {
+        count++;
+        }
+        return randQ[count++];
+    }
+}
 public static void main(String[] args) {   // unit testing (optional)
+    RandomizedQueue<String> r = new RandomizedQueue<String>();
+        for( String a: args) {
+            r.enqueue(a);
+            r.enqueue(a);
+        }
+        Iterator<String> it = r.iterator();
+        int leng = r.size();
+        for (int i = 0; i <leng; i++){
+            System.out.println(r.dequeue());         
+        }
+        for (Integer i = 0; i < 15; i++){
+           r.enqueue(i.toString());
+           System.out.println("Nullcounter is "+r.nullC);
+           System.out.println("Elements "+r.n);
+        }
+        while (it.hasNext()) {
+            String str = it.next();
+            System.out.println(str+ " ");
+        }
+        r.enqueue("abc");
+////        r.enqueue("gma");
+        System.out.println(r.dequeue());
 }
 }
