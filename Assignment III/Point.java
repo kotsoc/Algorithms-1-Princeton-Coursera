@@ -140,20 +140,34 @@ public class Point implements Comparable<Point> {
      * Unit tests the Point data type.
      */
     public static void main(String[] args) {
-        /* YOUR CODE HERE */
-        Point[] arr = new Point[7];
-        arr[0] = new Point(3, 6);
-        arr[2] = new Point(7, 4);
-        arr[3] = new Point(0, 0);
-        arr[6] = new Point(2, 3);
-        arr[4] = new Point(8, 9);
-        arr[1] = new Point(3, 5);
-        arr[5] = new Point(1, 4);
-         final Comparator<Point> comp = arr[5].slopeOrder(); 
-        Arrays.sort(arr,comp );
-        for (int i = 0; i < 7; i++) {
-            System.out.println(arr[i].toString());
-            System.out.println(arr[0].slopeTo(arr[i]));
+        int x,y;
+        int j = 0;
+        if (args.length > 0){ 
+            n = Integer.parseInt(args[0]);
+            Point[] arr = new Point[n];
         }
+        else{ 
+            throw new java.lang.IllegalArgumentException(); 
+        }
+        for (i = 0; i < n; i=+2) {
+            x = Integer.parseInt(args[i]);
+            y = Integer.parseInt(args[i+1]);
+            arr[j++] = Point(x, y);
+        }
+        BruteCollinearPoints brut = new BruteCollinearPoints
+//        Point[] arr = new Point[7];
+//        arr[0] = new Point(3, 6);
+//        arr[2] = new Point(7, 4);
+//        arr[3] = new Point(0, 0);
+//        arr[6] = new Point(2, 3);
+//        arr[4] = new Point(8, 9);
+//        arr[1] = new Point(3, 5);
+//        arr[5] = new Point(1, 4);
+//         final Comparator<Point> comp = arr[5].slopeOrder(); 
+//        Arrays.sort(arr,comp );
+//        for (int i = 0; i < 7; i++) {
+//            System.out.println(arr[i].toString());
+//            System.out.println(arr[0].slopeTo(arr[i]));
+//        }
     }
 }
