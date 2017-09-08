@@ -1,45 +1,68 @@
+/*************************************************************************
+ *  A class that find colinear points from a collection of 2d
+ *  point. This version is the brute one with no optimizations
+ * <p>
+ * This class was created for the 3rd assignment of
+ * Princeton's algorithm course in coursera
+ *
+ * @author Konstantinos Peratinos
+ * @version 1.0
+ *************************************************************************/
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class BruteCollinearPoints {
-    private Point[] a;
-    double[] slope = new double[4];
-    ArrayList<LineSegment> segs = new ArrayList<LineSegment>();
+    private double[] slope;
+    private ArrayList<LineSegment> segs = new ArrayList<LineSegment>();
     
     /**
-     * Has to take an array of points!
+     * The constructor of the class, most of the work
+     * is performed here.
      * 
+     * @param an array of point objects
      */
-    public BruteCollinearPoints(Point x, Point y, Point z, Point w) { // finds all line segments containing 4 points
-        if ( x != null &&  y != null &&  z != null &&  w != null) {
-            a[0] = x;
-            if (y == x) { throw new java.lang.IllegalArgumentException(); } 
-            a[1] =y;
-            if (z == x || z == y) { throw new java.lang.IllegalArgumentException(); }
-            a[2] = z;
-            if (w == x || w == y || w == z) { throw new java.lang.IllegalArgumentException(); }
-            a[3] = w;
-        }
-        else {
-            throw new java.lang.IllegalArgumentException();
-        }
-        for (int i = 1; i < 4; i++){
-            slope[i] = a[0].slopeTo(a[i]);
-                if (slope[1] == slope[i]) {
-                    if (i ==3) {
-                        Arrays.sort(a);
-                        segs.add(new LineSegment(a[0],a[3]));
+    public BruteCollinearPoints(Point[] points) { // finds all line segments containing 4 points
+        for (int i=0; i < points.length; i++) {
+            slope = new double[points.length];
+            if (points[i] == null) { throw new java.lang.IllegalArgumentException(); }
+            for (int j = 0; j <points.length ; j++) {
+                if (i != j) {
+                    if (points[j] == null || points[j] == points[i]) { 
+                        throw new java.lang.IllegalArgumentException(); 
+                    }
+                     slope[j] = points[i].slopeTo(points[j]);
+////                     System.out.println(slope[j]);
+                }
+            }
+            for (int k = 0; k < points.length; k++) {
+                int z = 0; // Colinear point counter
+                Point[] col_points = new Point[4];
+                for (int m = points.length-1; m > k; m--){
+                    if (slope[k] == slope[m] && k != m) {
+                        col_points[z++] = points[m];
+                        System.out.println("Found one" + m);
                     } 
                 }
-                else { break; }
+                if (z == 3) {
+                    col_points[z] = points[i];
+                    Arrays.sort(col_points);
+                    LineSegment line =new LineSegment(col_points[0], col_points[3]);
+                    if ( !segs.contains(line)){
+                        segs.add(new LineSegment(col_points[0], col_points[3]));
+                    }
+                }
+            }
         }
-    }
+    } 
+             
     
-    public int numberOfSegments() {// the number of line segments
+    public int numberOfSegments() { // the number of line segments
         return segs.size();
     }
     
     public LineSegment[] segments() { // the line segments
+        System.out.println(segs.size());
         LineSegment[] sgmts = segs.toArray(new LineSegment[segs.size()]);
         return sgmts;
     }
