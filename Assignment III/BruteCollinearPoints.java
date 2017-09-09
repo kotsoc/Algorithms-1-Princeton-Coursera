@@ -24,21 +24,20 @@ public class BruteCollinearPoints {
      */
     public BruteCollinearPoints(Point[] points) { // finds all line segments containing 4 points
         for (int i=0; i < points.length; i++) {
-            slope = new double[points.length];
+            slope = new double[points.length-i];
             if (points[i] == null) { throw new java.lang.IllegalArgumentException(); }
-            for (int j = 0; j <points.length ; j++) {
-                if (i != j) {
-                    if (points[j] == null || points[j] == points[i]) { 
+            for (int j = points.length-1; j > i ; j--) {
+                if (i != j && j-i != i) {
+                    if (points[j-i] == null || points[j-i] == points[i]) { 
                         throw new java.lang.IllegalArgumentException(); 
                     }
-                     slope[j] = points[i].slopeTo(points[j]);
-////                     System.out.println(slope[j]);
+                     slope[j-i] = points[i].slopeTo(points[j-i]);
                 }
             }
-            for (int k = 0; k < points.length; k++) {
+            for (int k = 0; k < points.length-i; k++) {
                 int z = 0; // Colinear point counter
                 Point[] col_points = new Point[4];
-                for (int m = points.length-1; m > k; m--){
+                for (int m = points.length-1-i; m > k; m--){
                     if (slope[k] == slope[m] && k != m) {
                         col_points[z++] = points[m];
                         System.out.println("Found one" + m);

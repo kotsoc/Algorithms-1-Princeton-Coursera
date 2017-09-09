@@ -10,7 +10,10 @@
 
 import java.util.Comparator;
 import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.algs4.In;
+import edu.princeton.cs.algs4.StdOut;
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class Point implements Comparable<Point> {
 
@@ -140,21 +143,21 @@ public class Point implements Comparable<Point> {
      * Unit tests the Point data type.
      */
     public static void main(String[] args) {
-        int x,y;
-        int j = 0;
-        if (args.length > 0){ 
-            n = Integer.parseInt(args[0]);
-            Point[] arr = new Point[n];
-        }
-        else{ 
-            throw new java.lang.IllegalArgumentException(); 
-        }
-        for (i = 0; i < n; i=+2) {
-            x = Integer.parseInt(args[i]);
-            y = Integer.parseInt(args[i+1]);
-            arr[j++] = Point(x, y);
-        }
-        BruteCollinearPoints brut = new BruteCollinearPoints
+////        int x,y;
+////        int j = 0;
+////        if (args.length > 0){ 
+////            n = Integer.parseInt(args[0]);
+////            Point[] arr = new Point[n];
+////        }
+////        else{ 
+////            throw new java.lang.IllegalArgumentException(); 
+////        }
+////        for (i = 0; i < n; i=+2) {
+////            x = Integer.parseInt(args[i]);
+////            y = Integer.parseInt(args[i+1]);
+////            arr[j++] = Point(x, y);
+////        }
+////        BruteCollinearPoints brut = new BruteCollinearPoints
 //        Point[] arr = new Point[7];
 //        arr[0] = new Point(3, 6);
 //        arr[2] = new Point(7, 4);
@@ -163,11 +166,39 @@ public class Point implements Comparable<Point> {
 //        arr[4] = new Point(8, 9);
 //        arr[1] = new Point(3, 5);
 //        arr[5] = new Point(1, 4);
-//         final Comparator<Point> comp = arr[5].slopeOrder(); 
-//        Arrays.sort(arr,comp );
+////         final Comparator<Point> comp = arr[5].slopeOrder(); 
+//        Arrays.sort(arr);
 //        for (int i = 0; i < 7; i++) {
 //            System.out.println(arr[i].toString());
-//            System.out.println(arr[0].slopeTo(arr[i]));
-//        }
+////            System.out.println(arr[0].slopeTo(arr[i]));
+         // read the n points from a file
+    In in = new In(args[0]);
+    int n = in.readInt();
+    Point[] points = new Point[n];
+    for (int i = 0; i < n; i++) {
+        int x = in.readInt();
+        int y = in.readInt();
+        points[i] = new Point(x, y);
     }
+
+    // draw the points
+    StdDraw.enableDoubleBuffering();
+    StdDraw.setXscale(0, 32768);
+    StdDraw.setYscale(0, 32768);
+    for (Point p : points) {
+        p.draw();
+    }
+    StdDraw.show();
+
+    // print and draw the line segments
+    BruteCollinearPoints collinear = new BruteCollinearPoints(points);
+    for (LineSegment segment : collinear.segments()) {
+        System.out.println(segment);
+        segment.draw();
+    }
+    StdDraw.show();
+}
+
+        
+   
 }
