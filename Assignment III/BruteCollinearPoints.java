@@ -15,6 +15,7 @@ import java.util.Arrays;
 public class BruteCollinearPoints {
     private double[] slope;
     private ArrayList<LineSegment> segs = new ArrayList<LineSegment>();
+    private ArrayList<Integer> usedIndex = new ArrayList<Integer>();
     
     /**
      * The constructor of the class, most of the work
@@ -38,17 +39,21 @@ public class BruteCollinearPoints {
                 int z = 0; // Colinear point counter
                 Point[] col_points = new Point[4];
                 for (int m = points.length-1-i; m > k; m--){
-                    if (slope[k] == slope[m] && k != m) {
+                    if (slope[k] == slope[m] && k != m && !usedIndex.contains(m)) {
                         col_points[z++] = points[m];
+                        usedIndex.add(m);
                         System.out.println("Found one" + m);
                     } 
                 }
                 if (z == 3) {
                     col_points[z] = points[i];
                     Arrays.sort(col_points);
-                    LineSegment line =new LineSegment(col_points[0], col_points[3]);
-                    if ( !segs.contains(line)){
-                        segs.add(new LineSegment(col_points[0], col_points[3]));
+                    segs.add(new LineSegment(col_points[0], col_points[3]));
+                }
+                else {
+                    for (int y =0; y < z; y++)
+                    {
+                       usedIndex.remove(usedIndex.size()-1-y);
                     }
                 }
             }
