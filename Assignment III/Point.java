@@ -16,7 +16,7 @@ public class Point implements Comparable<Point> {
 
     private final int x;     // x-coordinate of this point
     private final int y;     // y-coordinate of this point
-//    public static final Comparator<Point> slopeOrd;
+////    public static final Comparator<Point> slopeOrd;
 
     /**
      * Initializes a new point.
@@ -159,7 +159,8 @@ public class Point implements Comparable<Point> {
     StdDraw.show();
 
     // print and draw the line segments
-    BruteCollinearPoints collinear = new BruteCollinearPoints(points);
+//    BruteCollinearPoints collinear = new BruteCollinearPoints(points);
+    FastCollinearPoints collinear = new FastCollinearPoints(points);
     for (LineSegment segment : collinear.segments()) {
         System.out.println(segment);
         segment.draw();

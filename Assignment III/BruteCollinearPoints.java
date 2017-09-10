@@ -24,6 +24,7 @@ public class BruteCollinearPoints {
      * @param an array of point objects
      */
     public BruteCollinearPoints(Point[] points) { // finds all line segments containing 4 points
+        if (points == null) { throw new java.lang.IllegalArgumentException(); }
         for (int i=0; i < points.length; i++) {
             slope = new double[points.length-i];
             if (points[i] == null) { throw new java.lang.IllegalArgumentException(); }
@@ -42,7 +43,6 @@ public class BruteCollinearPoints {
                     if (slope[k] == slope[m] && k != m && !usedIndex.contains(m)) {
                         col_points[z++] = points[m];
                         usedIndex.add(m);
-                        //System.out.println("Found one" + z);
                     } 
                 }
                 if (z == 3) {
@@ -69,7 +69,6 @@ public class BruteCollinearPoints {
     }
     
     public LineSegment[] segments() { // the line segments
-        System.out.println(segs.size());
         LineSegment[] sgmts = segs.toArray(new LineSegment[segs.size()]);
         return sgmts;
     }
