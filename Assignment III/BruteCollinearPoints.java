@@ -42,7 +42,7 @@ public class BruteCollinearPoints {
                     if (slope[k] == slope[m] && k != m && !usedIndex.contains(m)) {
                         col_points[z++] = points[m];
                         usedIndex.add(m);
-                        System.out.println("Found one" + m);
+                        //System.out.println("Found one" + z);
                     } 
                 }
                 if (z == 3) {
@@ -51,9 +51,12 @@ public class BruteCollinearPoints {
                     segs.add(new LineSegment(col_points[0], col_points[3]));
                 }
                 else {
+                    int size = usedIndex.size();
                     for (int y =0; y < z; y++)
                     {
-                       usedIndex.remove(usedIndex.size()-1-y);
+//                       System.out.println("Removing" + (size-1-y) + "When z is: "+z +"and y:"+ y);
+                       
+                       usedIndex.remove(size-1-y);
                     }
                 }
             }
