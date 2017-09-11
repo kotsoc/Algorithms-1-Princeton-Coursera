@@ -44,7 +44,7 @@ public class BruteCollinearPoints {
                 Point[] col_points = new Point[4];
                 
                 for (int m = slope.length-1; m > k; m--){
-                    if (slope[k] == slope[m] && k != m && !usedIndex.contains(m)) {
+                    if (slope[k] == slope[m] && k != m){ //&& !usedIndex.contains(m)) {
                         col_points[z++] = points[m+i];
                         usedIndex.add(m+i);
                     } 

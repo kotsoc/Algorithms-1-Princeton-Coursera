@@ -31,6 +31,7 @@ public class FastCollinearPoints {
             Arrays.sort(helpArr, slopeOrd);
             int z = 0; // Colinear point counter
             for (int j = 0; j < helpArr.length; j++) {
+            if (points[j] == null) { throw new java.lang.IllegalArgumentException(); }
             // Exception for duplicates
                 if (i != j) {
                     if (points[j] == points[i] || points[j] == null) { 
