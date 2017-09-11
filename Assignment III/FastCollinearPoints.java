@@ -17,39 +17,41 @@ import java.util.Comparator;
 
 public class FastCollinearPoints {
     private ArrayList<LineSegment> segz = new ArrayList<LineSegment>();
-    private Point[] helpArr;
+     private Point[] helpArr;
     
     public FastCollinearPoints(Point[] points) {   // finds all line segments containing 4 or more points  
         // Exception for Null arguements
         if (points == null) { throw new java.lang.IllegalArgumentException(); }
-        // Calculating the slope
+        // Calculating the slope   
         for (int i=0; i < points.length; i++) {
-            helpArr = Arrays.copyOfRange(points, i, points.length);
-            double[] slope = new double[points.length];   
-            Comparator<Point> slopeOrd = points[i].slopeOrder();
             // Exception for null element
-            if (points[i] == null) { throw new java.lang.IllegalArgumentException(); }  
+            if (points[i] == null) { throw new java.lang.IllegalArgumentException(); }
+            helpArr = Arrays.copyOfRange(points, i, points.length);  
+            Comparator<Point> slopeOrd = points[i].slopeOrder();
             Arrays.sort(helpArr, slopeOrd);
             int z = 0; // Colinear point counter
-            for (int j = 0; j < helpArr.length-1; j++) {
+            for (int j = 0; j < helpArr.length; j++) {
             // Exception for duplicates
                 if (i != j) {
-                    if (points[j] == points[i]) { 
+                    if (points[j] == points[i] || points[j] == null) { 
                         throw new java.lang.IllegalArgumentException(); 
                     }
                 }
-                if (points[i].slopeTo(helpArr[j]) == points[i].slopeTo(helpArr[j+1])) {
+                if (j < helpArr.length-1 && points[i].slopeTo(helpArr[j]) == points[i].slopeTo(helpArr[j+1])) {
                     z++;
-                }
+                } 
                 else if(z > 1) {
                     Point[] colPoints = new Point[z+2];
                     colPoints[z+1] = points[i];
                     for (int w = 0; w <=z; w++){
                         colPoints[w] = helpArr[j-w];
                     }
-                    z=0;
                     Arrays.sort(colPoints);
                     segz.add(new LineSegment(colPoints[0], colPoints[z+1]));
+                    z=0;
+                } 
+                else{
+                    z=0;
                 }
             }
         }
