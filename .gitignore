@@ -20,3 +20,6 @@
 
 # input files #
 *.txt
+
+# Intelij Config files
+*.iml
