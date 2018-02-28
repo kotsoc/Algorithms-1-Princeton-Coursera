@@ -1,13 +1,12 @@
-import edu.princeton.cs.algs4.MinPQ;
+
 import java.util.Arrays;
 import java.util.ArrayList;
 
 public class Board  {
-    private Board pred;
-    private int[] tiles;
-    private int[][] twin,blockz;
-    private int hamm,length,blank,blanki,blankj;
-    private int dim = 0;
+    protected int[] tiles;
+    protected int[][] twin,blockz;
+    protected int hamm,length,blank,blanki,blankj;
+    protected int dim = 0;
 
     public Board(int[][] blocks) {           // construct a board from an n-by-n array of blocks (where blocks[i][j] = block in row i, column j)
         length =blocks.length*blocks.length;
@@ -26,11 +25,11 @@ public class Board  {
                 blank = i;
                 blanki = i/dim;
                 blankj = i%dim;
-            } else if (blocks[i/dim][i%dim] != i){
+            } else if (blocks[i/dim][i%dim] != i+1){
                 hamm++;
             }
         }
-        // Creating the twin
+        // Creating the twin FIX TWIN -- CASE OF BLANK BEING THERE
         if (length > 3) {
             twin[1][0] = blocks[1][1];
             twin[1][1] = blocks[1][0];
@@ -155,24 +154,5 @@ public class Board  {
 
     public static void main(String[] args) {
 
-        // create initial board from file
-        In in = new In(args[0]);
-        int n = in.readInt();
-        int[][] blocks = new int[n][n];
-        for (int i = 0; i < n; i++)
-            for (int j = 0; j < n; j++)
-                blocks[i][j] = in.readInt();
-        Board initial = new Board(blocks);
-        StdOut.println(initial.hamming());
-        StdOut.println(initial.manhattan());
-        StdOut.println(initial.toString());
-        ArrayList<Board> a = (ArrayList<Board>)initial.neighbors();
-        // print solution to standard output
-        /*if (!solver.isSolvable())
-            StdOut.println("No solution possible");
-        else {
-            StdOut.println("Minimum number of moves = " + solver.moves());
-            for (Board board : solver.solution())
-                StdOut.println(board);*/
     }
 }
