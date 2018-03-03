@@ -1,40 +1,84 @@
 
+import edu.princeton.cs.algs4.Stack;
+import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.algs4.StdOut;
+
 import java.util.Arrays;
 import java.util.ArrayList;
 
 public class Board  {
-    protected int[] tiles;
-    protected int[][] twin,blockz;
-    protected int hamm,length,blank,blanki,blankj;
-    protected int dim = 0;
+    private final int[] tiles;
+    private int blank,hamm,manh2;
+    private final int length;
+    private final int dim;
 
     public Board(int[][] blocks) {           // construct a board from an n-by-n array of blocks (where blocks[i][j] = block in row i, column j)
         length =blocks.length*blocks.length;
         tiles = new int[length];
-        dim = dimension();
-        twin = new int[dim][dim];
-        blockz  = new int[dim][dim];
+        dim = blocks.length;
+        hamm = 0;
+        manh2 = 0;
         // Converting it to 1 d array for better perfomance
         for (int i = 0; i < length; i++) {
-            if (i < dim ){
-                twin[i] = blocks[i].clone();
-                //blockz[i] = blocks[i].clone();
-            }
-            tiles[i] = blocks[i/dim][i%dim];
-            if (blocks[i/dim][i%dim] == 0 ) {
+            int ii = i / dim;
+            int jj = i % dim;
+            tiles[i] = blocks[ii][jj];
+            if (blocks[ii][jj] != 0 ) {
+                int regI = (tiles[i]-1) / dim;
+                int regJ = (tiles[i]-1) % dim;
+                manh2 += Math.abs(ii-regI) + Math.abs(jj-regJ);
+                if (blocks[ii][jj] != i+1) {
+                    hamm++;
+                }
+            } else {
                 blank = i;
-                blanki = i/dim;
-                blankj = i%dim;
-            } else if (blocks[i/dim][i%dim] != i+1){
-                hamm++;
             }
-        }
-        // Creating the twin FIX TWIN -- CASE OF BLANK BEING THERE
-        if (length > 3) {
-            twin[1][0] = blocks[1][1];
-            twin[1][1] = blocks[1][0];
         }
     }
+
+    private Board (int [] tilez) { // Constructor for 1-d array
+        length =tilez.length;
+        tiles = tilez;
+        hamm = 0;
+        manh2 = 0;
+        dim = (int) Math.sqrt(length);
+
+        // Converting it to 1 d array for better perfomance
+        for (int i = 0; i < length; i++) {
+            int ii = i / dim;
+            int jj = i % dim;
+            if (tiles[i] != 0) {
+                if (tiles[i] != i+1) {
+                    int regI = (tiles[i]-1) / dim;
+                    int regJ = (tiles[i]-1) % dim;
+                    manh2 += Math.abs(ii-regI) + Math.abs(jj-regJ);
+                    hamm++;
+                }
+            } else {
+                blank = i;
+            }
+        }
+
+    }
+
+//    private static int[][] Doubledim (int tilez[]) {
+//        int dim = (int)Math.sqrt(tilez.length);
+//        int blockz[][] = new int[dim][dim];
+//        for (int i = 0; i < tilez.length; i++) {
+//            blockz[i/dim][i%dim]= tilez[i];
+//        }
+//        return blockz;
+//    }
+//
+//    private static int[] oneDim (int[][] blockz) {
+//        int length =blockz.length;
+//        int tilez[] = new int[length*length];
+//        for (int i = 0; i < length; i++) {
+//            tilez[i] = blockz[i / length][i % length];
+//        }
+//        return tilez;
+//    }
+
 
     public int dimension() {
         return (int)Math.sqrt(length);
@@ -45,21 +89,8 @@ public class Board  {
     }
 
     public int manhattan() {                 // sum of Manhattan distances between blocks and goal
-        int i = 0, j = 0, sum = 0;
-        //dim1 = dimension();
-        for (int k : tiles) {
-            if (k != 0) {
-                int regI = k%dim;
-                int regJ = k/dim;
-                sum += Math.abs(i-regI) + Math.abs(j-regJ);
-            }
-            i++;
-            if (i == dim) {
-                i = 0;
-                j++;
-            }
-        }
-        return sum;
+
+        return manh2;
     }
 
     public boolean isGoal() {                // is this board the goal board?
@@ -67,6 +98,15 @@ public class Board  {
     }
 
     public Board twin() {                    // a board that is obtained by exchanging any pair of blocks
+        int[] twin = tiles.clone();
+        if (blank/dim !=0){
+            twin[0] = tiles[1];
+            twin[1] = tiles[0];
+        } else {
+            twin[dim] = tiles[dim+1];
+            twin[dim+1] = tiles[dim];
+        }
+
         return new Board(twin);
     }
 
@@ -75,67 +115,41 @@ public class Board  {
         if (y == null) return false;
         if (y.getClass() != this.getClass()) return false;
         Board that = (Board) y;
-        for (int k = 0; k < length; k++){
-            if (this.tiles[k] != that.tiles[k]) return false;
-        }
-        return true;
+        if (length != that.length) return false;
+        return Arrays.equals(this.tiles, that.tiles);
     }
 
     public Iterable<Board> neighbors() {     // all neighboring boards
-        ArrayList<Board> neighb =  new ArrayList<Board>();
-        int n1[][] = new int[dim][dim];
-        System.out.println(Arrays.deepToString(blockz));
+        Stack<Board> neighb =  new Stack<Board>();
+        //int n1[][] = new int[dim][dim];
+        int[] neigh;
         // Tile to the right moves to blank
         if ((blank%dim)+1 < dim) {
-            int[] neigh = tiles.clone();
+            neigh = tiles.clone();
             neigh[blank] = tiles[blank+1];
             neigh[blank+1] = tiles[blank];
-            for (int i = 0; i < dim; i++) {
-                for (int j = 0; j < dim; j++) {
-                    n1[i][j] = neigh[i*dim + j];
-                }
-            }
-            neighb.add(new Board(n1));
-            System.out.println(Arrays.deepToString(n1));
+            neighb.push(new Board(neigh));
         }
         // Tile to the left moves to blank
         if ((blank%dim)-1 >= 0) {
-            int[] neigh = tiles.clone();
+            neigh = tiles.clone();
             neigh[blank] = tiles[blank-1];
             neigh[blank-1] = tiles[blank];
-            for (int i = 0; i < dim; i++) {
-                for (int j = 0; j < dim; j++) {
-                    n1[i][j] = neigh[i*dim + j];
-                }
-            }
-            neighb.add(new Board(n1));
-            System.out.println(Arrays.deepToString(n1));
+            neighb.push(new Board(neigh));
         }
         // Tile to the bottom moves to blank
         if (blank+dim < length) {
-            int[] neigh = tiles.clone();
+            neigh = tiles.clone();
             neigh[blank] = tiles[blank+dim];
             neigh[blank+dim] = tiles[blank];
-            for (int i = 0; i < dim; i++) {
-                for (int j = 0; j < dim; j++) {
-                    n1[i][j] = neigh[i*dim + j];
-                }
-            }
-            neighb.add(new Board(n1));
-            System.out.println(Arrays.deepToString(n1));
+            neighb.push(new Board(neigh));
         }
         // Tile to the top moves to blank
         if (blank-dim >= 0) {
-            int[] neigh = tiles.clone();
+            neigh = tiles.clone();
             neigh[blank] = tiles[blank-dim];
             neigh[blank-dim] = tiles[blank];
-            for (int i = 0; i < dim; i++) {
-                for (int j = 0; j < dim; j++) {
-                    n1[i][j] = neigh[i*dim + j];
-                }
-            }
-            neighb.add(new Board(n1));
-            System.out.println(Arrays.deepToString(n1));
+            neighb.push(new Board(neigh));
         }
         return neighb;
     }
@@ -153,6 +167,21 @@ public class Board  {
     }
 
     public static void main(String[] args) {
+        // For testing
+//        In in = new In(args[0]);
+//        int n = in.readInt();
+//        int[][] blocks = new int[n][n];
+//        for (int i = 0; i < n; i++)
+//            for (int j = 0; j < n; j++)
+//                blocks[i][j] = in.readInt();
+//        Board initial = new Board(blocks);
+//        StdOut.println(initial.hamming());
+//        StdOut.println("is"+initial.manh2);
+//        StdOut.println(Arrays.toString(initial.tiles));
+//        //        StdOut.println(initial.toString());
+//        //ArrayList<Board> a = (ArrayList<Board>)initial.neighbors();
+        // solve the puzzle
+        //Solver solver = new Solver(initial);
 
     }
 }
