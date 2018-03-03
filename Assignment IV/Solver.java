@@ -12,6 +12,7 @@
 import edu.princeton.cs.algs4.MinPQ;
 import java.util.Comparator;
 import edu.princeton.cs.algs4.Stack;
+import edu.princeton.cs.algs4.StdOut;
 
 public class Solver {
     private boolean solvable;
@@ -20,17 +21,17 @@ public class Solver {
 
     public Solver(Board initial) {          // find a solution to the initial board (using the A* algorithm)
         MinPQ<SearchNode> solve,solveTw;
-        SearchNode current,twin,pred,twinPred;
+        SearchNode current,twin;
+        path = new Stack<Board>();
+        int moves = 0;
+
         if (initial == null) {
             throw new IllegalArgumentException();
         }
-        int moves = 0;
-        path = new Stack<Board>();
-        pred = null;
-        twinPred = null;
+
         // Declaring initial Boards,Comparators and Prio Queues
-        current = new SearchNode(initial, moves, pred);
-        twin = new SearchNode(initial.twin(), moves, twinPred);
+        current = new SearchNode(initial, moves, null);
+        twin = new SearchNode(initial.twin(), moves, null);
         Comparator<SearchNode> ManhFunction = new ManhOrder();
         //Comparator<SearchNode> HammFunction = new HammOrder();
         solve = new MinPQ<SearchNode>(ManhFunction);
@@ -38,16 +39,13 @@ public class Solver {
         // Inserting initial search block + twin
         solve.insert(current);
         solveTw.insert(twin);
-
         // The Search Algorithm
         while (!(solve.isEmpty() || solveTw.isEmpty())) {
             current = solve.delMin();
             twin = solveTw.delMin();
-            pred = current.predecessor;
-//            System.out.println("prio is +" + current.manhPrio + "moves are " + moves );
+//            System.out.println("prio is +" + current.manhPrio + "moves are " + current.moved );
 //            System.out.println(current.currentB.toString());
-            moves++;
-            twinPred = twin.predecessor;
+            moves = current.moved+1;
             if (current.currentB.isGoal()){
                 solvable = true;
                 while(current !=null) {
@@ -60,12 +58,12 @@ public class Solver {
                 break;
             }
             for (Board n : current.currentB.neighbors()) {
-                if ((pred == null || !pred.currentB.equals(n))) {
+                if ((current.predecessor == null || !n.equals(current.predecessor.currentB))) {
                     solve.insert(new SearchNode(n, moves, current));
                 }
             }
             for (Board n : twin.currentB.neighbors() ) {
-                if (twinPred == null || !twinPred.currentB.equals(n)) {
+                if (current.predecessor == null || !n.equals(twin.predecessor.currentB)) {
                     solveTw.insert(new SearchNode(n, moves, twin));
                 }
             }
@@ -83,7 +81,8 @@ public class Solver {
     }
 
     public Iterable<Board> solution() {     // sequence of boards in a shortest solution; null if unsolvable
-    return path;
+    if (solvable) return path;
+    else return null;
     }
 
     private class SearchNode {
@@ -97,8 +96,8 @@ public class Solver {
             predecessor = pred;
             moved = moves;
             // Calculating priority functions
-            //hammPrio = init.hamming() + moves;
-            manhPrio = init.manhattan() + moves;
+            hammPrio = init.hamming() + moved;
+            manhPrio = init.manhattan() + moved;
 
         }
 
@@ -110,7 +109,7 @@ public class Solver {
             public int compare(SearchNode n1, SearchNode n2) {
                 int diff = n1.manhPrio - n2.manhPrio;
                 if (diff == 0) {
-                   return n2.moved - n1.moved;
+                   return n2.hammPrio - n1.hammPrio;
                 } else {
                     return diff;
                 }
@@ -125,29 +124,29 @@ public class Solver {
         };
 
     public static void main(String[] args) {
-// solve a slider puzzle (given below)
-//// create initial board from file
-// In in = new In(args[0]);
-// int n = in.readInt();
-// int[][] blocks = new int[n][n];
-// for (int i = 0; i < n; i++)
-// for (int j = 0; j < n; j++)
-// blocks[i][j] = in.readInt();
-// Board initial = new Board(blocks);
-// //        StdOut.println(initial.hamming());
-// //        StdOut.println(initial.manhattan());
-// //        StdOut.println(initial.toString());
-// //ArrayList<Board> a = (ArrayList<Board>)initial.neighbors();
-// // solve the puzzle
-// Solver solver = new Solver(initial);
+//        // solve a slider puzzle (given below)
+//        // create initial board from file
+//        In in = new In(args[0]);
+//        int n = in.readInt();
+//        int[][] blocks = new int[n][n];
+//        for (int i = 0; i < n; i++)
+//            for (int j = 0; j < n; j++)
+//                blocks[i][j] = in.readInt();
+//        Board initial = new Board(blocks);
+//        //        StdOut.println(initial.hamming());
+//        //        StdOut.println(initial.manhattan());
+//        //        StdOut.println(initial.toString());
+//        //ArrayList<Board> a = (ArrayList<Board>)initial.neighbors();
+//        // solve the puzzle
+//        Solver solver = new Solver(initial);
 //
-// // print solution to standard output
-// if (!solver.isSolvable())
-// StdOut.println("No solution possible");
-// else {
-// StdOut.println("Minimum number of moves = " + solver.moves());
-// for (Board board : solver.solution())
-// StdOut.println(board.toString());
-// }
+//        // print solution to standard output
+//        if (!solver.isSolvable())
+//            StdOut.println("No solution possible");
+//        else {
+//            StdOut.println("Minimum number of moves = " + solver.moves());
+//            for (Board board : solver.solution())
+//                StdOut.println(board.toString());
+//        }
     }
 }

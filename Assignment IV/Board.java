@@ -111,11 +111,10 @@ public class Board  {
     }
 
     public boolean equals(Object y) {        // does this board equal y?
-        if (y == this) return true;
         if (y == null) return false;
-        if (y.getClass() != this.getClass()) return false;
+        if (y.getClass() != this.getClass()) {
+            return false;}
         Board that = (Board) y;
-        if (length != that.length) return false;
         return Arrays.equals(this.tiles, that.tiles);
     }
 
@@ -167,21 +166,30 @@ public class Board  {
     }
 
     public static void main(String[] args) {
-        // For testing
+//         For testing
 //        In in = new In(args[0]);
 //        int n = in.readInt();
 //        int[][] blocks = new int[n][n];
-//        for (int i = 0; i < n; i++)
-//            for (int j = 0; j < n; j++)
-//                blocks[i][j] = in.readInt();
+//        int[][] blocks2 = new int[n][n];
+//        for (int i = 0; i < n; i++){
+//            for (int j = 0; j < n; j++) {
+//                int x =in.readInt();
+//                blocks[i][j] = x;
+//                blocks2[i][j] =x;
+//            }
+//        }
+//
 //        Board initial = new Board(blocks);
+//        Board a2nd = new Board(blocks2);
 //        StdOut.println(initial.hamming());
 //        StdOut.println("is"+initial.manh2);
+//        StdOut.println(initial.equals(a2nd));
 //        StdOut.println(Arrays.toString(initial.tiles));
+//        StdOut.println(Arrays.toString(a2nd.tiles));
 //        //        StdOut.println(initial.toString());
 //        //ArrayList<Board> a = (ArrayList<Board>)initial.neighbors();
-        // solve the puzzle
-        //Solver solver = new Solver(initial);
+////         solve the puzzle
+////        Solver solver = new Solver(initial);
 
     }
 }
