@@ -22,6 +22,7 @@ public class Solver {
     public Solver(Board initial) {          // find a solution to the initial board (using the A* algorithm)
         MinPQ<SearchNode> solve,solveTw;
         SearchNode current,twin;
+        solvable = false;
         path = new Stack<Board>();
         int moves = 0;
 
@@ -81,8 +82,9 @@ public class Solver {
     }
 
     public Iterable<Board> solution() {     // sequence of boards in a shortest solution; null if unsolvable
-    if (solvable) return path;
+    if (solvable)  return path;
     else return null;
+
     }
 
     private class SearchNode {
